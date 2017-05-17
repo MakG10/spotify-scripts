@@ -9,6 +9,8 @@ For example, you open up the new cool playlist you found. You like the song #1, 
 
 It works in a shuffle mode as well.
 
+![Spotify Skip](https://raw.githubusercontent.com/MakG10/spotify-scripts/master/assets/demo.gif)
+
 ### Installation
 1. Make sure you have a user script manager installed in your web browser, i.e. [Greasemonkey](https://addons.mozilla.org/pl/firefox/addon/greasemonkey/) on Firefox or [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) on Chrome.
-2. Download and install Spotify Skip.
+2. Download and install [Spotify Skip](https://github.com/MakG10/spotify-scripts/raw/master/spotify-skip.user.js).

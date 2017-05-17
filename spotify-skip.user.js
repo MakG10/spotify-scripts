@@ -5,7 +5,7 @@
 // @description:pl  Skrypt pozwala na tymczasowe pominięcie utworów w dowolnej liście odtwarzania. Użyj "Skip this song" w menu kontekstowym (PPM na tytule utworu).
 // @version         1.0
 // @author          Maciej Gierej <makg@makg.eu>
-// @icon
+// @icon            https://raw.githubusercontent.com/MakG10/spotify-scripts/master/assets/icon.png
 // @include         https://open.spotify.com/*
 // @grant           none
 // ==/UserScript==
