@@ -3,7 +3,7 @@
 // @namespace       http://maciej.gierej.pl
 // @description     It allows to temporarly skip desired songs in any playlist. Use "Skip this song" option in the context menu.
 // @description:pl  Skrypt pozwala na tymczasowe pominięcie utworów w dowolnej liście odtwarzania. Użyj "Skip this song" w menu kontekstowym (PPM na tytule utworu).
-// @version         1.0
+// @version         1.0.1
 // @author          Maciej Gierej <makg@makg.eu>
 // @icon            https://raw.githubusercontent.com/MakG10/spotify-scripts/master/assets/icon.png
 // @include         https://open.spotify.com/*
@@ -28,7 +28,7 @@
 				if(SpotifySkip._initialized) return;
 
 				for(var i = 0; i < mutations.length; i++) {
-					if(mutations[i].target.tagName == 'FOOTER' && SpotifySkip._getNowPlaying()) {
+					if(mutations[i].target.className === 'connect-device-list-container') {
 						SpotifySkip._initialized = true;
 						SpotifySkip._url = window.location.href;
 
@@ -53,7 +53,7 @@
 			});
 
 			setInterval(function() {
-				if(SpotifySkip._url != window.location.href) {
+				if(SpotifySkip._url !== window.location.href) {
 					SpotifySkip._url = window.location.href;
 
 					var tracklist = SpotifySkip._getTracklistContainer();
@@ -66,13 +66,26 @@
 				}
 			}, 200);
 		},
+		onPlayerInit: function(callback) {
+			var observer = new MutationObserver(function(mutations) {
+				for(var i = 0; i < mutations.length; i++) {
+					if(mutations[i].target.className === 'now-playing') {
+						callback();
+						observer.disconnect();
+						break;
+					}
+				}
+			});
+
+			observer.observe(document, {childList: true, subtree: true});
+		},
 		readTracks: function() {
 			var elements = document.querySelectorAll('.tracklist .tracklist-row');
 
 			var tracks = [];
 			elements.forEach(function(element) {
 				tracks.push({
-					name: element.querySelector('.track-name').innerHTML,
+					name: element.querySelector('.tracklist-name').innerHTML,
 					top: element.getBoundingClientRect().top,
 					element: element
 				});
@@ -120,7 +133,7 @@
 			observer.observe(this._getNowPlaying(), {characterData: true, childList: true, subtree: true});
 		},
 		_getNowPlaying: function() {
-			return document.querySelector('.now-playing .track-info__name');
+			return document.querySelector('.now-playing-bar .track-info__name');
 		},
 		_getForwardButton: function() {
 			return document.querySelector('.player-controls .spoticon-skip-forward-16');
@@ -158,7 +171,10 @@
 	SpotifySkip.onInit(function() {
 		SpotifySkip.readTracks();
 		contextMenu.injectUI();
-		SpotifySkip.watchPlaylist();
+
+		SpotifySkip.onPlayerInit(function() {
+			SpotifySkip.watchPlaylist();
+		});
 
 		SpotifySkip.onUrlChange(function() {
 			SpotifySkip.readTracks();
