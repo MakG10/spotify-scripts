@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            Spotify Skip
-// @namespace       http://maciej.gierej.pl
+// @namespace       https://maciej.gierej.pl
 // @description     It allows to temporarly skip desired songs in any playlist. Use "Skip this song" option in the context menu.
 // @description:pl  Skrypt pozwala na tymczasowe pominięcie utworów w dowolnej liście odtwarzania. Użyj "Skip this song" w menu kontekstowym (PPM na tytule utworu).
-// @version         1.0.1
+// @version         1.0.2
 // @author          Maciej Gierej <makg@makg.eu>
 // @icon            https://raw.githubusercontent.com/MakG10/spotify-scripts/master/assets/icon.png
 // @include         https://open.spotify.com/*
@@ -28,7 +28,7 @@
 				if(SpotifySkip._initialized) return;
 
 				for(var i = 0; i < mutations.length; i++) {
-					if(mutations[i].target.className === 'connect-device-list-container') {
+					if(mutations[i].target.className === 'now-playing-bar__left') {
 						SpotifySkip._initialized = true;
 						SpotifySkip._url = window.location.href;
 
@@ -124,7 +124,11 @@
 					var currentSong = mutations[i].target.textContent;
 
 					if(SpotifySkip.skippedTracks.indexOf(currentSong) >= 0) {
-						SpotifySkip._getForwardButton().click();
+						// Quick fix for the case when there are multiple tracks to be skipped in a row. Spotify prevents immediate presses of forward button.
+						setTimeout(function() {
+							SpotifySkip._getForwardButton().click();
+						}, 200);
+
 						return;
 					}
 				}
@@ -172,9 +176,9 @@
 		SpotifySkip.readTracks();
 		contextMenu.injectUI();
 
-		SpotifySkip.onPlayerInit(function() {
-			SpotifySkip.watchPlaylist();
-		});
+		//SpotifySkip.onPlayerInit(function() {
+		SpotifySkip.watchPlaylist();
+		//});
 
 		SpotifySkip.onUrlChange(function() {
 			SpotifySkip.readTracks();
